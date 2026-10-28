@@ -52,11 +52,11 @@ def entry(choice, code):
 
 def side_room(investigate, code):
     """function that will prompt the player if they want to search an extra side room (more risk more reward)"""
-    test = random.randint(0,100)
+    chance = random.randint(0,100) # variable that randomly decides if the player will get the full code or the rightmost digit
     rightmost=code%10
-    if test >81:
+    if chance >81:
         print(f"Lucky! the full code is {code}")
-    elif test>31 and test<80:
+    elif chance>31 and chance<80:
         print(f"Nice try, the rightmost digit of the code is {rightmost}")
 
 
@@ -87,7 +87,7 @@ def heist():
     choice = float(input("Choose a method of entry "))
     print(entry(choice,code))
     investigate=None
-    while True:
+    while True: # this loop is created to make the player only choose yes or no
         investigate = input("You spot a room on the side, you investigate a side room? (y/n) ")
         if investigate=="y":
             side_room(investigate, code)
