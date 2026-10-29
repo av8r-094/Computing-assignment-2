@@ -21,8 +21,6 @@ def print_signature():
 
 def entry(choice, code):
     """entry scene, 3 guards, choice of entry and break-in code are defined here"""
-
-
     suspicion = 0 #initiating the suspicion counter
     clue = 0 #initiating clue
 
@@ -46,7 +44,7 @@ def entry(choice, code):
         clue = (code//100)
 
 
-    return (f"You broke in! However {suspicion} Guards were alerted, the leftmost digit for the code is {clue}")
+    return suspicion, clue
 
 #entry function ends here
 
@@ -54,17 +52,34 @@ def side_room(investigate, code):
     """function that will prompt the player if they want to search an extra side room (more risk more reward)"""
     chance = random.randint(0,100) # variable that randomly decides if the player will get the full code or the rightmost digit
     rightmost=code%10
+    print("You chose to investigate the room")
+    time.sleep(2)
+    print("Inside the room lays what used to be a lab, shattered test tubes, damaged equipment, toppled workstations, fluorescent lights hanging by a wire from the ceiling, and signs of futile struggle mark the floor")
+    time.sleep(5)
+    print("")
+    print("You begin searching the scatterd cabinets...")
+    time.sleep(2)
+    print("")
     if chance >81:
-        print(f"Lucky! the full code is {code}")
+        print(f"you managed to find a wrinkled lab note, the bottom half reads: 'Don't Forget! The full code is {code}'")
     elif chance>31 and chance<80:
-        print(f"Nice try, the rightmost digit of the code is {rightmost}")
+        print(f"You find a clue, the rightmost digit of the code is {rightmost}")
+    else:
+        print("You search, but cannot find anything in time, you leave the laboratory.")
 
-
+    return suspicion, code
 #side_room function ends here
 
 
-def crack_code(investigation, code):
+def crack_code(suspicion, code):
     """the big moment where the player must crack open the safe containing the bioweapon"""
+    attempts = 10-suspicion
+    print("You sneak through the seemingly abandoned facility, but you know someones watching so you remain stealthy")
+    print("")
+    time.sleep(3)
+    print("Finally you find the vault, unguarded, so you take your chance")
+    for i in range(attempts):
+        print(f"You have time for{attempts-i}")
 
 #crack_code functions ends here
 
@@ -83,9 +98,29 @@ def heist():
     if DEBUG==True:
         print(code)
 
+    print("Greetings agent, you are summoned here today on behalf of the Intergalactic Erusian Task Force.")
+    print("")
+    time.sleep(3)
+    print("A rogue privately funded military has been developing a Bioweapon on one of Jupiters moons; Europa, and its capable of exterminating life as we know it.")
+    print("")
+    time.sleep(4)
+    print("Your task: Break into their vault and make it out alive with the Bioweapon")
+    print("")
+    time.sleep(3)
+    print("Entry points:")
+    print("1. Surface Hatch")
+    print("2. Emergency exit")
+    print("3. 2nd Emergency exit")
+    print("4. Launchpad hatch")
+    print("5. SkyLight")
+    print("6. Underwater Hatch (Submarine)")
+    print("")
+    time.sleep(4)
+    print("Remember agent, the easier the entry, the higher the chance that guards will be alerted, stay vigilant")
+    print("")
 
     choice = float(input("Choose a method of entry "))
-    print(entry(choice,code))
+
     investigate=None
     while True: # this loop is created to make the player only choose yes or no
         investigate = input("You spot a room on the side, you investigate a side room? (y/n) ")
@@ -97,6 +132,7 @@ def heist():
             break
         else:
             print("Invalid option, try again")
+    crack_code(side_room(investigate, code))
 
 
 
