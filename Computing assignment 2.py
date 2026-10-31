@@ -107,10 +107,11 @@ def escape(suspicion):
             progress+=1
             print(f"You run but theyre still tailing you. Progress = {progress}, Danger = {danger}")
         elif inpt=="Hide" and det<=80:
+            progress+=1
             print(f"They pass by you as you hide in a crevice. Progress = {progress}, Danger = {danger}")
         elif inpt=="Hide" and det>80:
-            print(f"Your hiding attempt was futile. Progress = {progress}, Danger = {danger}")
             danger+=2
+            print(f"Your hiding attempt was futile. Progress = {progress}, Danger = {danger}")
         elif inpt=="Shortcut" and det<=50:
             progress+=3
             print(f"You jump into the vents and sneak away successfully. Progress = {progress}, Danger = {danger}")
@@ -189,7 +190,7 @@ def heist(name):
 ##Escape scene
         progress = escape(suspicion)
         if progress>=10:
-            print("You did what you could, but the things you learned in that lab will haunt you.")
+            print("You managed to escape, but the things you learned in that lab will haunt you.")
             time.sleep(4)
         elif progress<10:
             print("You fail to return home, and the events of what happened on Europa remain unknown")
