@@ -1,5 +1,8 @@
-#Computing 2 assignment: the Big Heist
-#this computing assignment is a game about breaking into a secure facility on Europa, one of Jupiters moons to steal a bioweapon
+"""Computing 2 assignment: the Big Heist
+this computing assignment is a game about breaking into a secure facility on Europa, one of Jupiters moons to steal a bioweapon
+
+Created by Ioannis(John) Zografos - 400680100, 2026"""
+
 import time
 import math
 import random
@@ -107,82 +110,170 @@ def crack_code(suspicion, code):
 
 def escape(suspicion):
     """the final scene where the player must make a run for it and escape the facility"""
+    danger = suspicion//3
+    progress = 0
+    accepted_inputs = ("Run", "Hide", "Shortcut")
 
-def heist():
+    while True:
+        if progress >= 10:
+            print("Great job, you made it out")
+            break
+        elif danger >= 10:
+            print("The last thing your team hears is the static of your radio...")
+            break
+
+        inpt = input("Choose action: Run, Hide or Shortcut - ")
+        while inpt not in accepted_inputs:
+            print("Invalid choice, try again")
+            inpt = input("Choose action: Run, Hide or Shortcut - ")
+        det = random.randint(1,100)
+        if inpt =="Run" and det<=60:
+            progress+=1
+            print("")
+            print("You lost them, but theyre still searching")
+            print("")
+            print(f"Progress: {progress}")
+            print(f"Danger: {danger}")
+        elif inpt =="Run" and det>60:
+            danger+=1
+            progress+=1
+            print("")
+            print(f"Progress: {progress}")
+            print(f"Danger: {danger}")
+        elif inpt=="Hide" and det<=80:
+            progress+=1
+            print("")
+            print(f"Progress: {progress}")
+            print(f"Danger: {danger}")
+        elif inpt=="Hide" and det>80:
+            danger+=2
+            print("")
+            print(f"Progress: {progress}")
+            print(f"Danger: {danger}")
+        elif inpt=="Shortcut" and det<=50:
+            progress+=3
+            print("")
+            print(f"Progress: {progress}")
+            print(f"Danger: {danger}")
+        elif inpt=="Shortcut" and det>50:
+            danger+=3
+            print("")
+            print(f"Progress: {progress}")
+            print(f"Danger: {danger}")
+
+def heist(name):
+
+    retry = True #initializes the retry variable, which will change if the palyer chooses to play again
 
     suspicion = 0 #initializing the suspicion counter for the main game, not associated with the normal "suspicion" counter in the functions
 
-    code = random.randint(100, 999)
-    if DEBUG==True:
-        print(f"DEBUG CODE: {code}")
-##Player greeting and entry scene
-    print("Greetings agent, you are summoned here today on behalf of the Intergalactic Erusian Task Force.")
-    print("")
-    time.sleep(3)
-    print("A rogue privately funded military has been developing a Bioweapon on one of Jupiters moons; Europa, and its capable of exterminating life as we know it.")
-    print("")
-    time.sleep(4)
-    print("Your task: Break into their vault and make it out alive with the Bioweapon")
-    print("")
-    time.sleep(3)
-    print("Entry points:")
-    print("1. Surface Hatch")
-    print("2. Emergency exit")
-    print("3. 2nd Emergency exit")
-    print("4. Launchpad hatch")
-    print("5. SkyLight")
-    print("6. Underwater Hatch (Submarine)")
-    print("")
-    time.sleep(4)
-    print("Remember agent, the easier the entry, the higher the chance that guards will be alerted, stay vigilant")
-    print("")
+    while retry == True:
 
-    choice = int(input("Choose a method of entry "))
+        code = random.randint(100, 999)
+        if DEBUG==True:
+            print(f"DEBUG CODE: {code}")
+    #Player greeting and entry scene
+        print(f"Greetings {name}, you are summoned here today on behalf of the Intergalactic Erusian Task Force.")
+        print("")
+        time.sleep(3)
+        print("A rogue privately funded military has been developing a Bioweapon on one of Jupiters moons; Europa, and its capable of exterminating life as we know it.")
+        print("")
+        time.sleep(4)
+        print("Your task: Break into their vault and make it out alive with the Bioweapon")
+        print("")
+        time.sleep(3)
+        print("Entry points:")
+        print("1. Surface Hatch")
+        print("2. Emergency exit")
+        print("3. 2nd Emergency exit")
+        print("4. Launchpad hatch")
+        print("5. SkyLight")
+        print("6. Underwater Hatch (Submarine)")
+        print("")
+        time.sleep(4)
+        print(f"Remember {name}, the easier the entry, the higher the chance that guards will be alerted, stay vigilant")
+        print("")
 
-    while True:
-        if choice <1 or choice>6:
-            print("Invalid choice, try again")
+        choice = int(input("Choose a method of entry "))
+
+        while True:
+            if choice <1 or choice>6:
+                print("Invalid choice, try again")
+                print("")
+                choice = int(input("Choose a method of entry "))
+            else:
+                break
+        print("")
+
+        suspicion, clue = entry(choice, code)
+
+        if clue == -1:
+            print("After sneaking around abandoned labs workstations and quiet halls, you piece together that the code is between 100 and 499")
+        elif clue== -2:
+            print("Europas laboratory groans under the stress of its ocean currents, despite that you managed to put together that the code for the vault is between 500 and 999")
+        else:
+            print(f"Despite the wasteland of a laboratory, the scientists were kind enough to leave behind a torn sticky note with the first digit for the vault code being {clue}")
+        print("")
+        print(f"Dont get your hopes up just yet, this is only the beginning.")
+        print("")
+        print("----------")
+        print("")
+        print(f"--Suspicion: {suspicion}")
+
+        print("")
+        print("----------")
+        print("")
+        investigate=None
+        while True: # this loop is created to make the player only choose yes or no
+            investigate = input("You spot a room on the side, you investigate a side room? (y/n) ")
+            if type(investigate)!= str:
+                print("Invalid option, try again")
+            if investigate=="y":
+                suspicion, clue = side_room(investigate, code)# assigns updated suspicion and clue variables after calling the side-room function
+                break
+            elif investigate=="n":
+                print("You chose to ignore the room")
+                break
+            else:
+                print("Invalid option, try again")
+        suspicion, success = crack_code(suspicion, code)
+        time.sleep(2)
+        print("")
+        print("Run.")
+        time.sleep(1)
+        print("")
+        print("----------")
+        print("")
+        print(f"Suspicion: {suspicion}")
+        print("")
+        print("----------")
+        escape(suspicion)
+
+        if success == True:
+            print("You did what you could, but the things you learned in that lab will haunt you.")
+            time.sleep(4)
             print("")
-            choice = int(input("Choose a method of entry "))
-        else:
-            break
-    print("")
+        elif success == False:
+            print("You fail to aqcuire the bioweapon, and the events of what happened on Europa remain unknown")
 
-    suspicion, clue = entry(choice, code)
+        redo = input("Would you like to play again? (y/n)") # the variable redo will dictate if the variable retry is true or false which will determine if the game runs again from the beginning
+        print("")
+        accepted_inputs2 = ("y", "n")#2nd variable that determines the accepted inputs, in this case to determine if the game will end or replay from the beginning
+        while redo not in accepted_inputs2:
+            print("Invalid option.")
+            redo = input("Would you like to play again? (y/n)")
 
-    if clue == -1:
-        print("After sneaking around abandoned labs workstations and quiet halls, you piece together that the code is between 100 and 499")
-    elif clue== -2:
-        print("Europas laboratory groans under the stress of its ocean currents, despite that you managed to put together that the code for the vault is between 500 and 999")
-    else:
-        print(f"Despite the wasteland of a laboratory, the scientists were kind enough to leave behind a torn sticky note with the first digit for the vault code being {clue}")
-    print("")
-    print("----------")
-    print("")
-    print(f"Dont get your hopes up just yet, this is only the beginning.")
-    print("")
-    print(f"--Suspicion: {suspicion}")
-
-    print("")
-    print("----------")
-    print("")
-    investigate=None
-    while True: # this loop is created to make the player only choose yes or no
-        investigate = input("You spot a room on the side, you investigate a side room? (y/n) ")
-        if type(investigate)!= str:
-            print("Invalid option, try again")
-        if investigate=="y":
-            suspicion, clue = side_room(investigate, code)# assigns updated suspicion and clue variables after calling the side-room function
-            break
-        elif investigate=="n":
-            print("You chose to ignore the room")
-            break
-        else:
-            print("Invalid option, try again")
-    crack_code(suspicion, code)
+        if redo=="y":
+            retry=True
+        elif redo=="n":
+            retry = False
 
 ##end of functions
 
 print_signature()
 
-heist()
+name = input("Before we begin, enter your name: ")
+
+heist(name)
+
+print(f"Thank you for playing my game {name}")
