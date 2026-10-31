@@ -32,8 +32,7 @@ def entry(choice, code):
     if guard3>choice:
         suspicion = suspicion+1
 
-    print(f"You made it through, however {suspicion} guards were alerted")
-    print("")
+    print(f"You made it through, however {suspicion} guard(s) were alerted")
     time.sleep(2)
 
     if choice>4:
@@ -49,63 +48,40 @@ def entry(choice, code):
 
 def side_room(investigate, code):
     """function that will prompt the player if they want to search an extra side room (more risk more reward)"""
-    chance = random.randint(0,100) # random variable that dictates clues and suspicion
-    suspicion = (chance+1)//20
-    rightmost=code%10
-    print("You chose to investigate the room")
-    time.sleep(2)
-    print("")
-    print("Inside the room lays what used to be a lab, shattered test tubes, damaged equipment, toppled workstations, fluorescent lights hanging by a wire from the ceiling, and signs of futile struggle mark the floor")
-    time.sleep(5)
-    print("")
-    print("You begin searching the scattered cabinets...")
-    time.sleep(2)
-    print("")
-    if chance >81:
-        print(f"you managed to find a wrinkled lab note, the bottom half reads: 'Don't Forget! The full code is {code}'")
-        print("")
-        print("----------")
-    elif chance>31 and chance<80:
-        print(f"You find a clue, the rightmost digit of the code is {rightmost}")
-        print("")
-    elif chance<=31:
-        print("You search, but cannot find anything in time, you leave the laboratory empty-handed.")
-        print("")
-        print("----------")
+    suspicion = 0
+    clue = -1
+    if investigate=="y":
+        chance = random.randint(0,100) # random variable that dictates clues and suspicion
+        suspicion = (chance+1)//20
+        rightmost=code%10
+        print("Inside the room lays what used to be a lab, shattered test tubes, damaged equipment, toppled workstations, fluorescent lights hanging by a wire from the ceiling, and signs of futile struggle mark the floor")
+        time.sleep(5)
+        if chance >=81:
+            clue = code
+        elif chance>=31 and chance<=80:
+            clue = rightmost
+        elif chance<=31:
+            clue = -1
+    else:
+        print("You ignore the room")
 
-    return suspicion, code
+    return suspicion, clue
 
 def crack_code(suspicion, code):
     """the big moment where the player must crack open the safe containing the bioweapon"""
     guess = 0
-    print("You sneak through the seemingly abandoned facility, but something doesnt sit right... so you remain stealthy")
-    print("")
-    time.sleep(3)
-    print("Finally you find the vault, unguarded, so you take your chance")
-    print("")
     attempts = 10-suspicion
-    while attempts != 0:
-        print(f"You have time for {attempts} attempt(s)")
-        print("")
-        guess = int(input("Enter code: "))
-        if guess != code:
-            print("")
-            print("---Incorrect---")
-            print("")
-            suspicion+=1
-            attempts-=1
-            success = False
-        elif guess == code:
-            print("The safe creaks open...")
-            time.sleep(2)
-            print("")
-            print("Empty")
+    print(f"You have time for {attempts} attempts")
+    for i in range(attempts):
+        guess = math.floor(float(input("Enter 3-digit code: ")))
+        if guess == code:
+            print(f"Attempt {i+1}: Guess = {guess}, ---Correct---")
             success = True
-            break
-    print("Agent, our sensors have detected multiple anomalous heat signatures within the facility, LEAVE IMMEDIATELY.")
-    time.sleep(3)
-    print("")
-    print("those werent guards to begin with")
+            return suspicion, success
+        else:
+            print(f"Attempt {i+1}: Guess = {guess}, ---Incorrect---")
+            success= False
+
     return suspicion, success
 
 def escape(suspicion):
@@ -115,11 +91,7 @@ def escape(suspicion):
     accepted_inputs = ("Run", "Hide", "Shortcut")
 
     while True:
-        if progress >= 10:
-            print("Great job, you made it out")
-            break
-        elif danger >= 10:
-            print("The last thing your team hears is the static of your radio...")
+        if progress >= 10 or danger >=10:
             break
 
         inpt = input("Choose action: Run, Hide or Shortcut - ")
@@ -129,37 +101,24 @@ def escape(suspicion):
         det = random.randint(1,100)
         if inpt =="Run" and det<=60:
             progress+=1
-            print("")
-            print("You lost them, but theyre still searching")
-            print("")
-            print(f"Progress: {progress}")
-            print(f"Danger: {danger}")
+            print(f"You lost them, but theyre still searching. Progress = {progress}, Danger = {danger}")
         elif inpt =="Run" and det>60:
             danger+=1
             progress+=1
-            print("")
-            print(f"Progress: {progress}")
-            print(f"Danger: {danger}")
+            print(f"You run but theyre still tailing you. Progress = {progress}, Danger = {danger}")
         elif inpt=="Hide" and det<=80:
-            progress+=1
-            print("")
-            print(f"Progress: {progress}")
-            print(f"Danger: {danger}")
+            print(f"They pass by you as you hide in a crevice. Progress = {progress}, Danger = {danger}")
         elif inpt=="Hide" and det>80:
+            print(f"Your hiding attempt was futile. Progress = {progress}, Danger = {danger}")
             danger+=2
-            print("")
-            print(f"Progress: {progress}")
-            print(f"Danger: {danger}")
         elif inpt=="Shortcut" and det<=50:
             progress+=3
-            print("")
-            print(f"Progress: {progress}")
-            print(f"Danger: {danger}")
+            print(f"You jump into the vents and sneak away successfully. Progress = {progress}, Danger = {danger}")
         elif inpt=="Shortcut" and det>50:
             danger+=3
-            print("")
-            print(f"Progress: {progress}")
-            print(f"Danger: {danger}")
+            print(f"You try to sneak away but the change in your pocket falls out and alerts the entities. Progress = {progress}, Danger = {danger}")
+
+    return progress
 
 def heist(name):
 
@@ -172,15 +131,12 @@ def heist(name):
         code = random.randint(100, 999)
         if DEBUG==True:
             print(f"DEBUG CODE: {code}")
-    #Player greeting and entry scene
+##Player greeting and entry scene
         print(f"Greetings {name}, you are summoned here today on behalf of the Intergalactic Erusian Task Force.")
-        print("")
         time.sleep(3)
         print("A rogue privately funded military has been developing a Bioweapon on one of Jupiters moons; Europa, and its capable of exterminating life as we know it.")
-        print("")
         time.sleep(4)
         print("Your task: Break into their vault and make it out alive with the Bioweapon")
-        print("")
         time.sleep(3)
         print("Entry points:")
         print("1. Surface Hatch")
@@ -189,80 +145,60 @@ def heist(name):
         print("4. Launchpad hatch")
         print("5. SkyLight")
         print("6. Underwater Hatch (Submarine)")
-        print("")
         time.sleep(4)
         print(f"Remember {name}, the easier the entry, the higher the chance that guards will be alerted, stay vigilant")
-        print("")
-
         choice = int(input("Choose a method of entry "))
-
         while True:
             if choice <1 or choice>6:
                 print("Invalid choice, try again")
-                print("")
                 choice = int(input("Choose a method of entry "))
             else:
                 break
-        print("")
-
-        suspicion, clue = entry(choice, code)
-
+        suspicion_e, clue = entry(choice, code)
+        suspicion+=suspicion_e #adds suspicion gained from entry scene
         if clue == -1:
             print("After sneaking around abandoned labs workstations and quiet halls, you piece together that the code is between 100 and 499")
         elif clue== -2:
             print("Europas laboratory groans under the stress of its ocean currents, despite that you managed to put together that the code for the vault is between 500 and 999")
+            time.sleep(4)
         else:
             print(f"Despite the wasteland of a laboratory, the scientists were kind enough to leave behind a torn sticky note with the first digit for the vault code being {clue}")
-        print("")
-        print(f"Dont get your hopes up just yet, this is only the beginning.")
-        print("")
-        print("----------")
-        print("")
-        print(f"--Suspicion: {suspicion}")
-
-        print("")
-        print("----------")
-        print("")
-        investigate=None
-        while True: # this loop is created to make the player only choose yes or no
-            investigate = input("You spot a room on the side, you investigate a side room? (y/n) ")
-            if type(investigate)!= str:
-                print("Invalid option, try again")
-            if investigate=="y":
-                suspicion, clue = side_room(investigate, code)# assigns updated suspicion and clue variables after calling the side-room function
-                break
-            elif investigate=="n":
-                print("You chose to ignore the room")
-                break
-            else:
-                print("Invalid option, try again")
-        suspicion, success = crack_code(suspicion, code)
-        time.sleep(2)
-        print("")
-        print("Run.")
-        time.sleep(1)
-        print("")
-        print("----------")
-        print("")
-        print(f"Suspicion: {suspicion}")
-        print("")
-        print("----------")
-        escape(suspicion)
-
-        if success == True:
+##Side room scene
+        inputs = ("y", "n")
+        investigate = input("You spot a peculiar room, do you investigate? (y/n)")
+        while investigate not in inputs:
+            investigate = input("Invalid input, try again:")
+        suspicion_s, clue = side_room(investigate, code)
+        suspicion+=suspicion_s
+        if clue==-1 and investigate=="y":
+            print("Despite thoroughly searching the room, you leave empty handed")
+        elif clue!=-1 and investigate=="y":
+            print(f"You find a note on the desk, the rightmost digit of the 3-digit code is {clue}")
+        time.sleep(3)
+        print("You sneak through the rubble within the facility, but something doesnt sit right...")
+        time.sleep(3)
+        print("You spot the battered vault, and take the chance to try and open it")
+##Cracking the code scene
+        suspicion_c, success = crack_code(suspicion, code)
+        suspicion+=suspicion_c #adds suspicion gained from code scene
+        if success==True:
+            print("You open the vault, to nothing!!")
+        else:
+            print("You did not manage to open the vault in time.")
+        print("Your radio starts hissing with static and you hear multiple heavy footsteps, you dont know what those things are and youre not going to find out")
+##Escape scene
+        progress = escape(suspicion)
+        if progress>=10:
             print("You did what you could, but the things you learned in that lab will haunt you.")
             time.sleep(4)
-            print("")
-        elif success == False:
-            print("You fail to aqcuire the bioweapon, and the events of what happened on Europa remain unknown")
-
+        elif progress<10:
+            print("You fail to return home, and the events of what happened on Europa remain unknown")
+##Retry inquiry
         redo = input("Would you like to play again? (y/n)") # the variable redo will dictate if the variable retry is true or false which will determine if the game runs again from the beginning
-        print("")
         accepted_inputs2 = ("y", "n")#2nd variable that determines the accepted inputs, in this case to determine if the game will end or replay from the beginning
         while redo not in accepted_inputs2:
             print("Invalid option.")
             redo = input("Would you like to play again? (y/n)")
-
         if redo=="y":
             retry=True
         elif redo=="n":
